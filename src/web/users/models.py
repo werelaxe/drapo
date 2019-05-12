@@ -1,6 +1,7 @@
+from django import urls
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.sites.shortcuts import get_current_site
-from django.core import validators, urlresolvers
+from django.core import validators
 from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -86,18 +87,18 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
             return True
 
     def get_absolute_url(self):
-        return urlresolvers.reverse('users:profile', args=[self.id])
+        return urls.reverse('users:profile', args=[self.id])
 
 
 class EmailConfirmation(models.Model):
-    user = models.OneToOneField(User, related_name='email_confirmation')
+    user = models.OneToOneField(User, related_name='email_confirmation', on_delete=models.CASCADE)
 
     token = models.CharField(max_length=32, default=generate_random_secret_string)
 
     is_confirmed = models.BooleanField(default=False)
 
     def _build_confirmation_link(self, request):
-        return request.build_absolute_uri(urlresolvers.reverse('users:confirm', args=[self.token]))
+        return request.build_absolute_uri(urls.reverse('users:confirm', args=[self.token]))
 
     def send(self, request):
         self.user.email_user(

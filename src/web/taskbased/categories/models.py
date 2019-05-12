@@ -21,7 +21,11 @@ class Category(models.Model):
 
 
 class ContestCategories(models.Model):
-    contest = models.OneToOneField(contests.models.TaskBasedContest, related_name='categories_list')
+    contest = models.OneToOneField(
+        contests.models.TaskBasedContest,
+        related_name='categories_list',
+        on_delete=models.CASCADE
+    )
 
     categories = sortedm2m.fields.SortedManyToManyField(Category)
 

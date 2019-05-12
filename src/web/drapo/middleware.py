@@ -10,11 +10,14 @@ class LocaleMiddleware(object):
     is available, of course).
     """
 
-    def process_request(self, request):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
         language = translation.get_language_from_request(request)
         translation.activate(language)
         request.LANGUAGE_CODE = translation.get_language()
 
-    def process_response(self, request, response):
+        response = self.get_response(request)
         translation.deactivate()
         return response

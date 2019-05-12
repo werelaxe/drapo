@@ -1,6 +1,6 @@
+from django import urls
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
-from django.core import urlresolvers
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
@@ -111,7 +111,7 @@ def confirm(request, token):
 
     messages.success(request, 'Your account has been confirmed')
 
-    return redirect(urlresolvers.reverse('home'))
+    return redirect(urls.reverse('home'))
 
 
 @login_required
@@ -132,7 +132,7 @@ def edit(request):
                     user.last_name = form.cleaned_data['last_name']
                     user.save()
                     messages.success(request, 'Your settings has been changed')
-                    return redirect(urlresolvers.reverse('users:edit'))
+                    return redirect(urls.reverse('users:edit'))
     else:
         form = forms.EditUserForm(user)
 
@@ -156,7 +156,7 @@ def change_password(request):
             request.user.save()
 
             messages.success(request, 'Your password has been changed')
-            return redirect(urlresolvers.reverse('users:edit'))
+            return redirect(urls.reverse('users:edit'))
 
     user_form = forms.EditUserForm(request.user)
 

@@ -5,8 +5,8 @@ import re
 import collections
 import datetime
 
+from django import urls
 from django.contrib import messages
-from django.core import urlresolvers
 from django.db import transaction
 from django.db.models.query_utils import Q
 from django.http.response import Http404, HttpResponseNotFound, HttpResponseForbidden, JsonResponse
@@ -337,14 +337,14 @@ def task(request, contest_id, task_id):
             else:
                 messages.error(request, 'Wrong answer, sorry')
 
-            return redirect(urlresolvers.reverse('contests:task', args=[contest.id, task.id]))
+            return redirect(urls.reverse('contests:task', args=[contest.id, task.id]))
     else:
         form = tasks_forms.AttemptForm()
 
     statement_generator = task.statement_generator
     if request.user.is_anonymous() and not statement_generator.is_available_for_anonymous():
         messages.error(request, 'This task is not available for guests. Please sign in')
-        return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
+        return redirect(urls.reverse('contests:tasks', args=[contest.id]))
 
     statement = statement_generator.generate({
         'user': request.user,
@@ -391,7 +391,7 @@ def add_category(request, contest_id):
 
                 contest.categories_list.categories.add(category)
                 contest.save()
-            return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
+            return redirect(urls.reverse('contests:tasks', args=[contest.id]))
     else:
         form = forms.CategoryForm()
 
@@ -421,7 +421,7 @@ def edit_category(request, contest_id, category_id):
             )
             new_category.id = category.id
             new_category.save()
-            return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
+            return redirect(urls.reverse('contests:tasks', args=[contest.id]))
     else:
         form = forms.CategoryForm(initial=category.__dict__)
 
@@ -447,7 +447,7 @@ def delete_category(request, contest_id, category_id):
     contest.categories_list.categories.remove(category)
     contest.categories_list.save()
 
-    return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
+    return redirect(urls.reverse('contests:tasks', args=[contest.id]))
 
 
 @staff_required
@@ -503,7 +503,7 @@ def attempt(request, contest_id, attempt_id):
             new_attempt.save()
 
             messages.success(request, 'Saved!')
-            return redirect(urlresolvers.reverse('contests:attempts', args=[contest.id]))
+            return redirect(urls.reverse('contests:attempts', args=[contest.id]))
     else:
         form = tasks_forms.EditAttemptForm(attempt)
 
@@ -640,7 +640,7 @@ def add_participant(request, contest_id):
         except CannotAddParticipant as e:
             messages.error(request, str(e))
 
-    return redirect(urlresolvers.reverse('contests:participants', args=[contest.id]))
+    return redirect(urls.reverse('contests:participants', args=[contest.id]))
 
 
 @staff_required
@@ -659,7 +659,7 @@ def change_participant_status(request, contest_id, participant_id):
     setattr(participant, parameter, value)
     participant.save()
 
-    return redirect(urlresolvers.reverse('contests:participants', args=[contest.id]))
+    return redirect(urls.reverse('contests:participants', args=[contest.id]))
 
 
 def add_task_to_contest(contest, category, task):
@@ -719,7 +719,7 @@ def add_task_to_contest_view(request, contest, category=None):
 
                 messages.success(request, 'Task %s successfully created' % task.name)
 
-                return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
+                return redirect(urls.reverse('contests:tasks', args=[contest.id]))
     else:
         form = forms.CreateTaskForm()
         create_text_checker_form = forms.CreateTextCheckerForm()
@@ -856,7 +856,7 @@ def delete_task(request, contest_id, task_id):
 
     task.delete()
 
-    return redirect(urlresolvers.reverse('contests:tasks', args=[contest.id]))
+    return redirect(urls.reverse('contests:tasks', args=[contest.id]))
 
 
 def news(request, contest_id, news_id):
@@ -971,7 +971,7 @@ def open_task(request, contest_id, task_id, participant_id):
 
     if not is_manual_task_opening_available_in_contest(contest):
         messages.error(request, 'Manual task opening is forbidden for this contest')
-        return redirect(urlresolvers.reverse('contests:task_opens', args=[contest.id, task.id]))
+        return redirect(urls.reverse('contests:task_opens', args=[contest.id, task.id]))
 
     participant = get_object_or_404(models.AbstractParticipant, pk=participant_id)
     if participant.contest_id != contest.id:

@@ -1,7 +1,7 @@
 import djchoices
 import polymorphic.models
 from cached_property import cached_property
-from django.core import urlresolvers
+from django import urls
 from django.db import models
 from django.utils import timezone
 
@@ -72,7 +72,7 @@ class Contest(polymorphic.models.PolymorphicModel):
         return self.name
 
     def get_absolute_url(self):
-        return urlresolvers.reverse('contests:contest', args=[self.id])
+        return urls.reverse('contests:contest', args=[self.id])
 
     def is_user_participating(self, user):
         if self.participation_mode == ContestParticipationMode.Individual:
@@ -173,7 +173,7 @@ class TaskBasedContest(Contest):
 
 
 class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.ModelWithTimestamps):
-    contest = models.ForeignKey(Contest, related_name='participants')
+    contest = models.ForeignKey(Contest, related_name='participants', on_delete=models.CASCADE)
 
     is_approved = models.BooleanField(default=True)
 
@@ -190,7 +190,7 @@ class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.Mode
 
 
 class IndividualParticipant(AbstractParticipant):
-    user = models.ForeignKey(users.models.User, related_name='individual_participant_in')
+    user = models.ForeignKey(users.models.User, related_name='individual_participant_in', on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.user)
@@ -204,7 +204,7 @@ class IndividualParticipant(AbstractParticipant):
 
 
 class TeamParticipant(AbstractParticipant):
-    team = models.ForeignKey(teams.models.Team, related_name='participant_in')
+    team = models.ForeignKey(teams.models.Team, related_name='participant_in', on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.team)
@@ -219,7 +219,7 @@ class TeamParticipant(AbstractParticipant):
 
 class AbstractAdditionalScorer(polymorphic.models.PolymorphicModel):
     """ Defines additional scores policy """
-    contest = models.ForeignKey(Contest, related_name='additional_scorers')
+    contest = models.ForeignKey(Contest, related_name='additional_scorers', on_delete=models.CASCADE)
 
 
 class ScoreByPlaceAdditionalScorer(AbstractAdditionalScorer):
@@ -233,9 +233,9 @@ class ScoreByPlaceAdditionalScorer(AbstractAdditionalScorer):
 
 
 class News(ModelWithTimestamps):
-    contest = models.ForeignKey(Contest, related_name='news')
+    contest = models.ForeignKey(Contest, related_name='news', on_delete=models.CASCADE)
 
-    author = models.ForeignKey(users.models.User, related_name='+')
+    author = models.ForeignKey(users.models.User, related_name='+', on_delete=models.CASCADE)
 
     title = models.CharField(max_length=1000, help_text='Title')
 
@@ -249,4 +249,4 @@ class News(ModelWithTimestamps):
         verbose_name_plural = 'News'
 
     def get_absolute_url(self):
-        return urlresolvers.reverse('contests:news', args=[self.contest_id, self.id])
+        return urls.reverse('contests:news', args=[self.contest_id, self.id])

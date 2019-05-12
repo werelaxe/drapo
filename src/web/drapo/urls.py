@@ -20,9 +20,9 @@ import contests.views
 
 urlpatterns = [
     url(r'^$', contests.views.contests_list, name='home'),
-    url(r'^contests/', include('contests.urls', namespace='contests')),
-    url(r'^users/', include('users.urls', namespace='users')),
-    url(r'^teams/', include('teams.urls', namespace='teams')),
+    url(r'^contests/', include(('contests.urls', 'contests'), namespace='contests')),
+    url(r'^users/', include(('users.urls', 'users'), namespace='users')),
+    url(r'^teams/', include(('teams.urls', 'teams'), namespace='teams')),
 
     url(r'^admin/', admin.site.urls),
     url(r'^hijack/', include('hijack.urls')),

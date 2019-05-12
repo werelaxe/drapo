@@ -164,11 +164,15 @@ class ManualChecker(AbstractChecker):
 class Task(models.Model):
     name = models.CharField(max_length=100, help_text='Shows on tasks page')
 
-    statement_generator = models.OneToOneField(AbstractStatementGenerator, related_name='task')
+    statement_generator = models.OneToOneField(
+        AbstractStatementGenerator,
+        related_name='task',
+        on_delete=models.CASCADE
+    )
 
     max_score = models.PositiveIntegerField(help_text='Maximum score for this task')
 
-    checker = models.OneToOneField(AbstractChecker, related_name='task')
+    checker = models.OneToOneField(AbstractChecker, related_name='task', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -185,14 +189,15 @@ class Task(models.Model):
 
 
 class TaskFile(models.Model):
-    task = models.ForeignKey(Task, related_name='files')
+    task = models.ForeignKey(Task, related_name='files', on_delete=models.CASCADE)
 
     participant = models.ForeignKey(
         contests.models.AbstractParticipant,
         help_text='None if this file is for all participants',
         related_name='+',
         null=True,
-        default=None
+        default=None,
+        on_delete=models.CASCADE
     )
 
     name = models.CharField(
@@ -222,7 +227,7 @@ class TaskFile(models.Model):
 
 # For contests without categories
 class ContestTasks(models.Model):
-    contest = models.OneToOneField(contests.models.Contest, related_name='tasks_list')
+    contest = models.OneToOneField(contests.models.Contest, related_name='tasks_list', on_delete=models.CASCADE)
 
     tasks = sortedm2m.fields.SortedManyToManyField(Task)
 
@@ -231,13 +236,17 @@ class ContestTasks(models.Model):
 
 
 class Attempt(drapo.models.ModelWithTimestamps):
-    contest = models.ForeignKey(contests.models.Contest, related_name='attempts')
+    contest = models.ForeignKey(contests.models.Contest, related_name='attempts', on_delete=models.CASCADE)
 
-    task = models.ForeignKey(Task, related_name='attempts')
+    task = models.ForeignKey(Task, related_name='attempts', on_delete=models.CASCADE)
 
-    participant = models.ForeignKey(contests.models.AbstractParticipant, related_name='attempts')
+    participant = models.ForeignKey(
+        contests.models.AbstractParticipant,
+        related_name='attempts',
+        on_delete=models.CASCADE
+    )
 
-    author = models.ForeignKey(users.models.User, related_name='attempts')
+    author = models.ForeignKey(users.models.User, related_name='attempts', on_delete=models.CASCADE)
 
     answer = models.TextField()
 
@@ -269,7 +278,11 @@ class Attempt(drapo.models.ModelWithTimestamps):
 
 class AbstractTasksOpeningPolicy(polymorphic.models.PolymorphicModel):
     """ Defined tasks opening policies, only for task-based CTFs """
-    contest = models.ForeignKey(contests.models.TaskBasedContest, related_name='tasks_opening_policies')
+    contest = models.ForeignKey(
+        contests.models.TaskBasedContest,
+        related_name='tasks_opening_policies',
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         verbose_name = 'Task opening policy'
@@ -353,13 +366,14 @@ class ManualTasksOpeningPolicy(AbstractTasksOpeningPolicy):
 
 
 class ManualOpenedTask(models.Model):
-    contest = models.ForeignKey(contests.models.TaskBasedContest, related_name='+')
+    contest = models.ForeignKey(contests.models.TaskBasedContest, related_name='+', on_delete=models.CASCADE)
 
-    task = models.ForeignKey(Task, related_name='manual_opens')
+    task = models.ForeignKey(Task, related_name='manual_opens', on_delete=models.CASCADE)
 
     participant = models.ForeignKey(
         contests.models.AbstractParticipant,
         null=True,
         default=None,
-        help_text='Set NULL to open task for everyone'
+        help_text='Set NULL to open task for everyone',
+        on_delete=models.CASCADE
     )

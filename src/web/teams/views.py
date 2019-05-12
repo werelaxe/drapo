@@ -1,5 +1,5 @@
+from django import urls
 from django.contrib import messages
-from django.core import urlresolvers
 from django.db import transaction
 from django.http.response import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
@@ -109,7 +109,7 @@ def join(request, invite_hash=None):
                     messages.warning(request, 'You are already in team ' + team.name)
                     if 'next' in request.POST and '//' not in request.POST['next']:
                         return redirect(request.POST['next'])
-                    return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+                    return redirect(urls.reverse('teams:team', args=[team.id]))
 
                 if settings.DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM and \
                         models.Team.objects.filter(members=request.user).exists() and \
@@ -118,7 +118,7 @@ def join(request, invite_hash=None):
                                    'You can\'t join team %s while you are a member of another team' % team.name)
                     if 'next' in request.POST and '//' not in request.POST['next']:
                         return redirect(request.POST['next'])
-                    return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+                    return redirect(urls.reverse('teams:team', args=[team.id]))
 
                 team.members.add(request.user)
                 team.save()
@@ -127,7 +127,7 @@ def join(request, invite_hash=None):
 
         if 'next' in request.POST and '//' not in request.POST['next']:
             return redirect(request.POST['next'])
-        return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+        return redirect(urls.reverse('teams:team', args=[team.id]))
     elif request.method == 'GET':
         if team is None:
             return HttpResponseNotFound()
@@ -156,7 +156,7 @@ def leave(request, team_id):
 
         if 'next' in request.POST and '//' not in request.POST['next']:
             return redirect(request.POST['next'])
-    return redirect(urlresolvers.reverse('teams:team', args=[team.id]))
+    return redirect(urls.reverse('teams:team', args=[team.id]))
 
 
 @login_required
