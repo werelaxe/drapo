@@ -12,7 +12,7 @@ def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login
     Based on django.contrib.auth.decorators.login_required
     """
     actual_decorator = user_passes_test(
-        lambda u: u.is_authenticated() and u.is_email_confirmed,
+        lambda u: u.is_authenticated and u.is_email_confirmed,
         login_url=login_url,
         redirect_field_name=redirect_field_name
     )

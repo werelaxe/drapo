@@ -107,4 +107,3 @@ class EmailConfirmation(models.Model):
             self._build_confirmation_link(request) +
             '\n\nDrapo CTF checksystem',
             settings.DRAPO_EMAIL_SENDER)
-

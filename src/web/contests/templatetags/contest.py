@@ -5,7 +5,7 @@ register = Library()
 
 @register.filter
 def is_user_participating(contest, user):
-    return user.is_authenticated() and contest.is_user_participating(user)
+    return user.is_authenticated and contest.is_user_participating(user)
 
 
 @register.filter

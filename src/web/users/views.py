@@ -92,7 +92,7 @@ def register(request):
 
 @require_POST
 def logout(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         auth.logout(request)
 
     if 'next' in request.POST and '//' not in request.POST['next']:

@@ -42,7 +42,7 @@ def is_manual_task_opening_available_in_contest(contest):
 def contests_list(request):
     contests = models.Contest.objects.filter(is_visible_in_list=True).order_by('-start_time')
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         for contest in contests:
             contest.is_current_user_participating = contest.is_user_participating(request.user)
 
@@ -118,7 +118,7 @@ def contest(request, contest_id):
     contest = get_object_or_404(models.Contest, pk=contest_id)
 
     if not contest.is_visible_in_list:
-        has_access = (request.user.is_authenticated() and
+        has_access = (request.user.is_authenticated and
                       (request.user.is_staff or contest.is_user_participating(request.user)))
         if not has_access:
             return HttpResponseNotFound()
@@ -148,7 +148,7 @@ def tasks(request, contest_id):
         return redirect(contest)
 
     solved_tasks_ids = {}
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         participant = contest.get_participant_for_user(request.user)
         solved_tasks_ids = contest.get_tasks_solved_by_participant(participant)
     else:
@@ -306,7 +306,7 @@ def task(request, contest_id, task_id):
     if not is_task_open(contest, task, participant) and not request.user.is_staff:
         return HttpResponseForbidden('Task is closed')
 
-    if request.method == 'POST' and request.user.is_authenticated():
+    if request.method == 'POST' and request.user.is_authenticated:
         form = tasks_forms.AttemptForm(data=request.POST)
 
         if participant is None:
@@ -342,7 +342,7 @@ def task(request, contest_id, task_id):
         form = tasks_forms.AttemptForm()
 
     statement_generator = task.statement_generator
-    if request.user.is_anonymous() and not statement_generator.is_available_for_anonymous():
+    if request.user.is_anonymous and not statement_generator.is_available_for_anonymous():
         messages.error(request, 'This task is not available for guests. Please sign in')
         return redirect(urls.reverse('contests:tasks', args=[contest.id]))
 

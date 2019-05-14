@@ -100,7 +100,7 @@ class Contest(polymorphic.models.PolymorphicModel):
         """ Returns IndividualParticipant or TeamParticipant """
         participant = None
 
-        if user.is_anonymous():
+        if user.is_anonymous:
             return None
 
         if self.participation_mode == ContestParticipationMode.Team:
