@@ -125,7 +125,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STORAGE_DIR = 'storage'
 
-REGISTRY_URL = "192.168.1.11:5000"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -141,3 +140,9 @@ REDIS_PORT = '6379'
 BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+
+DOCKER_PATH = 'docker'
+DOCKER_COMPOSE_PATH = 'docker-compose'
+DOCKER_COMPOSE_FILE_DEFAULT_NAME = 'docker-compose.yml'
+DOCKER_REGISTRY_URL = "207.154.245.200:5000"
+DOCKER_DAEMON_CONF_PATH = "/etc/docker/daemon.json"

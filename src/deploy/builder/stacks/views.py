@@ -27,7 +27,8 @@ class FileUploadView(APIView):
         models.Stack.objects.create(
             name=filename,
             context=file_obj,
-            download_url='/stacks/download/' + filename
+            download_url='/stacks/download/' + filename,
+            status=models.Stack.ENQUEUED_STATUS,
         )
         return Response(status=HTTP_204_NO_CONTENT)
 
