@@ -1,3 +1,5 @@
+import traceback
+
 from .celery import app
 from .models import Stack
 from .stack_processor import process_stack, StackPostProcessingError
@@ -17,7 +19,7 @@ def process_stack_task(stack_name):
             stack.error_text = f'Post processing error: {e}'
         stack.status = Stack.PUSHED_STATUS
         stack.save()
-    except Exception as e:
+    except Exception:
         stack.status = Stack.ERROR_STATUS
-        stack.error_text = 'Processing stack error: ' + str(e)
+        stack.error_text = 'Processing stack error: ' + traceback.format_exc()
         stack.save()
