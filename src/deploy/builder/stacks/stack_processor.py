@@ -1,27 +1,34 @@
 from tempfile import mkdtemp
-from shutil import copy, move
+from shutil import copy, rmtree
 import os
 import yaml
 import zipfile
 
 from django.conf import settings
-from .docker_wrapper.docker_commands import docker_compose_build, docker_compose_push
+from docker.client import DockerClient
+from docker.models.images import ImageCollection
+
+from .registry_checker import check_registry
 
 
 DOCKER_COMPOSE_FILE_DEFAULT_NAME = settings.DOCKER_COMPOSE_FILE_DEFAULT_NAME
 DOCKER_REGISTRY_URL = settings.DOCKER_REGISTRY_URL
+
+check_registry()
+docker_client = DockerClient()
+ic = ImageCollection(docker_client)
 
 
 class StackProcessingError(Exception):
     pass
 
 
-def check_result(result):
-    if result.returncode:
-        raise StackProcessingError(
-            f"Error while executing command '{result.args}', "
-            f"stdout={result.stdout}, stderr={result.stderr}"
-        )
+class StackPostProcessingError(Exception):
+    pass
+
+
+def get_dc_file_path(unpacked_stack_path, docker_compose_file_path):
+    return os.path.join(unpacked_stack_path, docker_compose_file_path)
 
 
 def unpack_stack(stack_path):
@@ -34,40 +41,57 @@ def unpack_stack(stack_path):
     return temp_dir_name
 
 
-def adjust_docker_compose_file(temp_stack_path, stack_name):
-    docker_compose_filename = os.path.join(temp_stack_path, DOCKER_COMPOSE_FILE_DEFAULT_NAME)
-    if not os.path.exists(docker_compose_filename):
-        raise StackProcessingError(f"Can not find file '{DOCKER_COMPOSE_FILE_DEFAULT_NAME}' in stack root")
-    new_docker_compose_filename = docker_compose_filename + '_new'
-    with open(docker_compose_filename) as dc_file, open(new_docker_compose_filename, 'w') as new_dc_file:
+def get_images_for_building(docker_compose_filename):
+    image_build_paths = {}
+    with open(docker_compose_filename) as dc_file:
         try:
             config = yaml.safe_load(dc_file)
             services = config['services']
-            for service_name, service in services.items():
+            for name, service in services.items():
                 if 'build' in service:
-                    service['image'] = f"{DOCKER_REGISTRY_URL}/{stack_name}_{service['image']}"
-            yaml.safe_dump(config, new_dc_file)
+                    image_name = service['image']
+                    image_build_paths[image_name] = service['build']
         except yaml.YAMLError as e:
-            raise StackProcessingError("Can not parse docker-compose config: " + str(e))
+            raise StackProcessingError(f"Can not parse docker-compose config: '{e}'")
         except KeyError as e:
-            raise StackProcessingError(f"Invalid config: {config}. Can not find field {e}")
-    os.remove(docker_compose_filename)
-    move(new_docker_compose_filename, docker_compose_filename)
+            raise StackProcessingError(f"Invalid docker-compose config. Can not find field: '{e}'")
+    return image_build_paths
 
 
-def build_stack(stack_path, stack_name):
-    temp_dir = unpack_stack(stack_path)
-    adjust_docker_compose_file(temp_dir, stack_name)
-    result = docker_compose_build(temp_dir)
-    check_result(result)
-    return temp_dir, result
+def build_images(images_for_building, stack_name):
+    for image_name, build_path in images_for_building.items():
+        full_tag = f'{DOCKER_REGISTRY_URL}/{stack_name}_{image_name}:latest'
+        if not os.path.isdir(build_path):
+            raise StackProcessingError(f"For image '{image_name}' build path '{build_path}' is not a directory")
+        ic.build(path=build_path, tag=full_tag, rm=True)
 
 
-def push_stack(built_stack_path):
-    result = docker_compose_push(built_stack_path)
-    check_result(result)
+def push_images(images_for_building, stack_name):
+    for image_name, build_path in images_for_building.items():
+        full_tag = f'{DOCKER_REGISTRY_URL}/{stack_name}_{image_name}:latest'
+        ic.push(full_tag)
+
+
+def clear_images(images_for_building, stack_name):
+    for image_name, build_path in images_for_building.items():
+        full_tag = f'{DOCKER_REGISTRY_URL}/{stack_name}_{image_name}:latest'
+        ic.remove(image=full_tag)
 
 
 def process_stack(stack_path, stack_name):
-    built_stack_path, build_result = build_stack(stack_path, stack_name)
-    push_stack(built_stack_path)
+    temp_dir = unpack_stack(stack_path)
+    os.chdir(temp_dir)
+
+    dc_file_path = get_dc_file_path(temp_dir, DOCKER_COMPOSE_FILE_DEFAULT_NAME)
+    if not os.path.exists(dc_file_path):
+        raise StackProcessingError(f"Can not find docker-compose file: '{dc_file_path}'")
+
+    images_for_building = get_images_for_building(dc_file_path)
+    build_images(images_for_building, stack_name)
+    push_images(images_for_building, stack_name)
+
+    try:
+        clear_images(images_for_building, stack_name)
+        rmtree(temp_dir)
+    except Exception as e:
+        raise StackPostProcessingError(e)
