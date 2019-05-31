@@ -6,5 +6,8 @@ urlpatterns = [
     # url(r'^(?P<name>[^/]+)?$', views.Task.as_view()),
     url(r'^add/(?P<name>[^/]+)$', views.TaskAddView.as_view()),
     # url(r'^download/(?P<name>[^/]+)$', views.FileDownloadView.as_view()),
+
+    url(r'^filecontexts/(?P<id>[^/]+)?$', views.ContextFileContextsListView.as_view()),
     url(r'^filecontexts/upload/(?P<filename>[^/]+)$', views.FileContextUploadView.as_view()),
+    url(r'^filecontexts/download/(?P<id>[^/]+)$', views.ContextFileDownloadView.as_view()),
 ]
