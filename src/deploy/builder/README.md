@@ -1,20 +1,20 @@
 # Installation for Ubuntu or Debian systems
 
-```apt install python3 python3-pip python-virtualenv git nginx uwsgi uwsgi-plugin-python3 redis-server
+`apt install python3 python3-pip python-virtualenv git nginx uwsgi uwsgi-plugin-python3 redis-server
 useradd -m -g www-data drapo
 usermod -aG docker drapo
-su drapo```
+su drapo`
 
 Follow commands need to be run as 'drapo' user
 
-```cd ~
-git clone https://github.com/werelaxe/drapo.git```
+`cd ~
+git clone https://github.com/werelaxe/drapo.git`
 
 Create and active virtual environment
 
-```virtualenv -p /usr/local/bin/python3.7 venv`
+`virtualenv -p /usr/local/bin/python3.7 venv`
 source venv/bin/activate
-cd drapo/src/deploy/builder```
+cd drapo/src/deploy/builder`
 
 Install requirements
 
