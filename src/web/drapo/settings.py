@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'contests',
     'taskbased.tasks',
     'taskbased.categories',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -163,7 +164,16 @@ DRAPO_TEAM_SIZE_LIMIT = 100
 # By one participant in one contest
 DRAPO_MAX_TRIES_IN_MINUTE = 10
 
-DRAPO_EMAIL_SENDER = 'admin@summer-ctf.com'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'drapo-platform@yandex.ru'
+EMAIL_HOST_PASSWORD = 'MR3aT8dLMxZKew'
+
+DRAPO_EMAIL_SENDER = 'drapo-platform@yandex.ru'
+
 DRAPO_UPLOAD_DIR = os.path.join(BASE_DIR, '..', '..', 'upload')
 DRAPO_TASKS_FILES_DIR = os.path.join(DRAPO_UPLOAD_DIR, 'tasks_files')
 
@@ -171,3 +181,8 @@ DRAPO_TEAM_NAMES_ARE_UNIQUE = False
 DRAPO_USER_CAN_BE_ONLY_IN_ONE_TEAM = False
 # If False captain can edit team name
 DRAPO_ONLY_STAFF_CAN_EDIT_TEAM_NAME = False
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
