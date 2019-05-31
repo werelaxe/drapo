@@ -3,6 +3,7 @@ import os
 from django.core.files import File
 from django.forms import model_to_dict
 from django.http import HttpResponse
+from rest_framework import authentication, permissions
 from rest_framework.views import APIView
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
@@ -12,6 +13,8 @@ from . import models
 
 
 class FileUploadView(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAdminUser,)
     parser_classes = (FileUploadParser,)
 
     def put(self, request, filename, format=None):
@@ -34,6 +37,8 @@ class FileUploadView(APIView):
 
 
 class StacksListView(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAdminUser,)
 
     def get(self, request, name):
         if name is None:
@@ -51,6 +56,8 @@ class StacksListView(APIView):
 
 
 class FileDownloadView(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAdminUser,)
 
     def get(self, request, name):
         context_filename = models.context_file_path(None, name)
