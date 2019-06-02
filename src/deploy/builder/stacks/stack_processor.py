@@ -1,3 +1,4 @@
+import requests
 from tempfile import mkdtemp
 from shutil import copy, rmtree
 import os
@@ -13,6 +14,7 @@ from .registry_checker import check_registry
 
 DOCKER_COMPOSE_FILE_DEFAULT_NAME = settings.DOCKER_COMPOSE_FILE_DEFAULT_NAME
 DOCKER_REGISTRY_URL = settings.DOCKER_REGISTRY_URL
+CALLBACK_URL = f"http://{settings.DEPLOYER_HOSTPORT}/tasks/update/"
 
 check_registry()
 docker_client = DockerClient()
@@ -95,3 +97,10 @@ def process_stack(stack_path, stack_name):
         rmtree(temp_dir)
     except Exception as e:
         raise StackPostProcessingError(e)
+
+
+def send_update(stack_name):
+    full_callback_url = CALLBACK_URL + stack_name
+    r = requests.post(full_callback_url)
+    if not r.ok:
+        raise StackPostProcessingError(f"Callback response is not ok: {r}, {r.content}")

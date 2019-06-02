@@ -146,3 +146,4 @@ DOCKER_COMPOSE_PATH = 'docker-compose'
 DOCKER_COMPOSE_FILE_DEFAULT_NAME = 'docker-compose.yml'
 DOCKER_REGISTRY_URL = "207.154.245.200:5000"
 DOCKER_DAEMON_CONF_PATH = "/etc/docker/daemon.json"
+DEPLOYER_HOSTPORT = "localhost:8000"

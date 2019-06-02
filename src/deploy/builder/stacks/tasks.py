@@ -2,7 +2,7 @@ import traceback
 
 from .celery import app
 from .models import Stack
-from .stack_processor import process_stack, StackPostProcessingError
+from .stack_processor import process_stack, StackPostProcessingError, send_update
 
 
 @app.task
@@ -22,4 +22,10 @@ def process_stack_task(stack_name):
     except Exception:
         stack.status = Stack.ERROR_STATUS
         stack.error_text = 'Processing stack error: ' + traceback.format_exc()
+        stack.save()
+    try:
+        send_update(stack_name)
+    except Exception:
+        stack.status = Stack.ERROR_STATUS
+        stack.error_text += 'Callback sending error: ' + traceback.format_exc()
         stack.save()
