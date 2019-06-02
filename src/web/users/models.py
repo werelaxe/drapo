@@ -91,7 +91,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
 
 
 class EmailConfirmation(models.Model):
-    user = models.OneToOneField(User, related_name='email_confirmation', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name='email_confirmation', on_delete=models.DO_NOTHING)
 
     token = models.CharField(max_length=32, default=generate_random_secret_string)
 

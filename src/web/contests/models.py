@@ -173,7 +173,7 @@ class TaskBasedContest(Contest):
 
 
 class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.ModelWithTimestamps):
-    contest = models.ForeignKey(Contest, related_name='participants', on_delete=models.CASCADE)
+    contest = models.ForeignKey(Contest, related_name='participants', on_delete=models.DO_NOTHING)
 
     is_approved = models.BooleanField(default=True)
 
@@ -190,7 +190,7 @@ class AbstractParticipant(polymorphic.models.PolymorphicModel, drapo.models.Mode
 
 
 class IndividualParticipant(AbstractParticipant):
-    user = models.ForeignKey(users.models.User, related_name='individual_participant_in', on_delete=models.CASCADE)
+    user = models.ForeignKey(users.models.User, related_name='individual_participant_in', on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return str(self.user)
@@ -204,7 +204,7 @@ class IndividualParticipant(AbstractParticipant):
 
 
 class TeamParticipant(AbstractParticipant):
-    team = models.ForeignKey(teams.models.Team, related_name='participant_in', on_delete=models.CASCADE)
+    team = models.ForeignKey(teams.models.Team, related_name='participant_in', on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return str(self.team)
@@ -219,7 +219,7 @@ class TeamParticipant(AbstractParticipant):
 
 class AbstractAdditionalScorer(polymorphic.models.PolymorphicModel):
     """ Defines additional scores policy """
-    contest = models.ForeignKey(Contest, related_name='additional_scorers', on_delete=models.CASCADE)
+    contest = models.ForeignKey(Contest, related_name='additional_scorers', on_delete=models.DO_NOTHING)
 
 
 class ScoreByPlaceAdditionalScorer(AbstractAdditionalScorer):
@@ -233,9 +233,9 @@ class ScoreByPlaceAdditionalScorer(AbstractAdditionalScorer):
 
 
 class News(ModelWithTimestamps):
-    contest = models.ForeignKey(Contest, related_name='news', on_delete=models.CASCADE)
+    contest = models.ForeignKey(Contest, related_name='news', on_delete=models.DO_NOTHING)
 
-    author = models.ForeignKey(users.models.User, related_name='+', on_delete=models.CASCADE)
+    author = models.ForeignKey(users.models.User, related_name='+', on_delete=models.DO_NOTHING)
 
     title = models.CharField(max_length=1000, help_text='Title')
 

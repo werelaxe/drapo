@@ -13,7 +13,7 @@ class Team(drapo.models.ModelWithTimestamps):
         users.models.User,
         help_text='Team captain',
         related_name='captain_in',
-        on_delete=models.CASCADE
+        on_delete=models.DO_NOTHING
     )
 
     members = models.ManyToManyField(
