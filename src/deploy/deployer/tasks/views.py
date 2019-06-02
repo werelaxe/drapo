@@ -34,13 +34,18 @@ class FileContextUploadView(APIView):
         new_file_context.context = file_obj
         new_file_context.download_url = f'/filecontexts/download/{new_file_context.id}'
         new_file_context.save()
-        return Response(status=HTTP_204_NO_CONTENT)
+        return Response({"filecontext_id": new_file_context.id})
 
 
 class TaskAddView(APIView):
     def post(self, request: Request, name, format=None):
-        if models.Task.objects.filter(name=name).count():
-            return Response(f"Task '{name}' already exists", status=HTTP_400_BAD_REQUEST)
+        tasks = list(models.Task.objects.filter(name=name))
+        if tasks:
+            if tasks[0].status != models.Task.ERROR_STATUS:
+                return Response(f"Task '{name}' already exists", status=HTTP_400_BAD_REQUEST)
+            else:
+                tasks[0].delete()
+
         if 'filecontext' not in request.GET:
             return Response("Filecontext id is required as URL parameter", status=HTTP_400_BAD_REQUEST)
         filecontext_id = request.GET['filecontext'][0]

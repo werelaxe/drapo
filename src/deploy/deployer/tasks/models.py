@@ -35,7 +35,7 @@ class Task(models.Model):
         (ADDED_STATUS, "Task added")
     )
     name = models.CharField(max_length=100, primary_key=True)
-    filecontext = models.ForeignKey(FileContext, on_delete=models.CASCADE)
+    filecontext = models.ForeignKey(FileContext, on_delete=models.DO_NOTHING)
     status = models.CharField(
         max_length=10,
         choices=POSSIBLE_STATUSES,
