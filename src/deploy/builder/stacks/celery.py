@@ -3,7 +3,7 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'builder.settings')
 
-app = Celery('builder')
+app = Celery('builder.stacks')
 app.config_from_object('django.conf:settings')
 
 # Load task modules from all registered Django app configs.

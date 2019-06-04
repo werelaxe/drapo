@@ -32,7 +32,3 @@ class Stack(models.Model):
     def delete(self, using=None, keep_parents=False):
         os.remove(self.context.name)
         super(Stack, self).delete(using=using, keep_parents=keep_parents)
-
-
-from .common import connect  # TODO solve this weirdness
-connect(Stack)

@@ -1,5 +1,3 @@
-import os
-
 from django.core.files import File
 from django.forms import model_to_dict
 from django.http import HttpResponse
@@ -10,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST
 
 from . import models
+from .celery_tasks import process_stack_task
 
 
 class FileUploadView(APIView):
@@ -33,6 +32,7 @@ class FileUploadView(APIView):
             download_url='/stacks/download/' + filename,
             status=models.Stack.ENQUEUED_STATUS,
         )
+        process_stack_task.delay(filename)
         return Response(status=HTTP_204_NO_CONTENT)
 
 

@@ -26,6 +26,6 @@ def process_stack_task(stack_name):
     try:
         send_update(stack_name)
     except Exception:
-        stack.status = Stack.ERROR_STATUS
+        stack.status = Stack.PUSHED_STATUS
         stack.error_text += 'Callback sending error: ' + traceback.format_exc()
         stack.save()
