@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 
     'tasks.apps.TasksConfig',
+    'task_instances.apps.TaskInstancesConfig',
+    'filecontexts.apps.FileContextsConfig'
 ]
 
 MIDDLEWARE = [
@@ -126,4 +128,13 @@ STATIC_URL = '/static/'
 STORAGE_DIR = 'storage'
 DOCKER_REGISTRY_URL = "207.154.245.200:5000"
 BUILDER_HOSTPORT = "localhost:7000"
-BUILDER_TOKEN = "7f4de4129c73d167a0d6bf63ad549c4e30a087ed"
+BUILDER_TOKEN = "312fceebc699fd5dd66b18f6603232d785381f75"
+DOCKER_COMPOSE_FILENAME = "docker-compose.yml"
+DC_TASK_CONFIGS_STORAGE_SUBDIR = "compose_files"
+DC_TI_CONFIGS_STORAGE_SUBDIR = "ti_dc_files"
+
+REDIS_HOST = 'localhost'
+REDIS_PORT = '6379'
+BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/1'
+BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/1'

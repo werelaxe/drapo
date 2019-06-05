@@ -8,7 +8,7 @@ def context_file_path(instance, filename):
 
 
 def dc_file_path(instance, filename):
-    return os.path.join(settings.STORAGE_DIR, settings.COMPOSE_CONFIGS_STORAGE_SUBDIR, f"{instance.id}.yml")
+    return os.path.join(settings.STORAGE_DIR, settings.DC_TASK_CONFIGS_STORAGE_SUBDIR, f"{instance.id}.yml")
 
 
 class FileContext(models.Model):
