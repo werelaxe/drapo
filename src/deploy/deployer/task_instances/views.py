@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from . import models
 from .utils import get_adjusted_dc_config
-from .celery_tasks import deploy_task_instance
+from .celery_tasks import deploy_task_instance, undeploy_task_instance
 import tasks.models
 
 
@@ -37,6 +37,7 @@ class TaskInstanceAddView(APIView):
         adjusted_dc_config_path = get_adjusted_dc_config(task)
         new_task_instance = models.TaskInstance.objects.create(
             task=task,
+            status=models.TaskInstance.ADDED_STATUS,
         )
         new_task_instance.dc_config = File(open(adjusted_dc_config_path), 'dc_config.yml')
         new_task_instance.save()
@@ -47,4 +48,11 @@ class TaskInstanceDeployView(APIView):
     def post(self, request: Request, id, format=None):
         task_instance = get_object_or_404(models.TaskInstance.objects.filter(id=id))
         deploy_task_instance.delay(task_instance.id)
+        return Response(status=HTTP_204_NO_CONTENT)
+
+
+class TaskInstanceUndeployView(APIView):
+    def post(self, request: Request, id, format=None):
+        task_instance = get_object_or_404(models.TaskInstance.objects.filter(id=id))
+        undeploy_task_instance.delay(task_instance.id)
         return Response(status=HTTP_204_NO_CONTENT)

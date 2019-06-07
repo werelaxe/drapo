@@ -99,12 +99,3 @@ class UpdateTaskStatusView(APIView):
             task.status = models.Task.READY_TO_DEPLOY
         task.save()
         return Response(status=HTTP_204_NO_CONTENT)
-
-
-# class DeployTaskView(APIView):
-#     def post(self, request, name):
-#         task = get_object_or_404(models.Task.objects.filter(name=name))
-#         if task.status != models.Task.READY_TO_DEPLOY:
-#             return Response(f"Can not deploy unready task")
-#         deploy_task.delay(task.name)
-#         return Response(status=HTTP_204_NO_CONTENT)
