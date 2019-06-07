@@ -1,4 +1,5 @@
 import requests
+from django.core.files import File
 from tempfile import mkdtemp
 from shutil import copy, rmtree
 import os
@@ -8,8 +9,10 @@ import zipfile
 from django.conf import settings
 from docker.client import DockerClient
 from docker.models.images import ImageCollection
+from docker_registry_client import DockerRegistryClient
 
 from .registry_checker import check_registry
+from .models import Stack
 
 
 DOCKER_COMPOSE_FILE_DEFAULT_NAME = settings.DOCKER_COMPOSE_FILE_DEFAULT_NAME
@@ -17,6 +20,8 @@ DOCKER_REGISTRY_URL = settings.DOCKER_REGISTRY_URL
 CALLBACK_URL = f"http://{settings.DEPLOYER_HOSTPORT}/tasks/update/"
 
 check_registry()
+drc = DockerRegistryClient('http://' + settings.DOCKER_REGISTRY_URL)
+
 docker_client = DockerClient()
 ic = ImageCollection(docker_client)
 
@@ -80,7 +85,9 @@ def clear_images(images_for_building, stack_name):
         ic.remove(image=full_tag)
 
 
-def process_stack(stack_path, stack_name):
+def process_stack(stack, stack_name):
+    stack_path = stack.context.file.name
+
     temp_dir = unpack_stack(stack_path)
     os.chdir(temp_dir)
 
@@ -88,6 +95,7 @@ def process_stack(stack_path, stack_name):
     if not os.path.exists(dc_file_path):
         raise StackProcessingError(f"Can not find docker-compose file: '{dc_file_path}'")
 
+    stack.config = File(open(dc_file_path), DOCKER_COMPOSE_FILE_DEFAULT_NAME)
     images_for_building = get_images_for_building(dc_file_path)
     build_images(images_for_building, stack_name)
     push_images(images_for_building, stack_name)
@@ -104,3 +112,13 @@ def send_update(stack_name):
     r = requests.post(full_callback_url)
     if not r.ok:
         raise StackPostProcessingError(f"Callback response is not ok: {r}, {r.content}")
+
+
+def check_images(stack):
+    repositories = drc.repositories()
+    ok = True
+    for image_name in get_images_for_building(stack.config.file.name):
+        if f"{stack.name}_{image_name}" not in repositories:
+            ok = False
+            break
+    return ok

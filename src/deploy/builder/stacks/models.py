@@ -8,6 +8,10 @@ def context_file_path(instance, filename):
     return os.path.join(settings.STORAGE_DIR, filename)
 
 
+def config_file_path(instance, filename):
+    return os.path.join(settings.STORAGE_DIR, "stack_configs", filename)
+
+
 class Stack(models.Model):
     ERROR_STATUS = 'error'
     ENQUEUED_STATUS = 'enqueued'
@@ -28,6 +32,7 @@ class Stack(models.Model):
         choices=POSSIBLE_STATUSES,
     )
     error_text = models.TextField()
+    config = models.FileField(upload_to=config_file_path, blank=True, default=None, null=True)
 
     def delete(self, using=None, keep_parents=False):
         os.remove(self.context.name)

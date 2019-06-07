@@ -14,7 +14,7 @@ def process_stack_task(stack_name):
         stack.status = Stack.PROCESSING_STATUS
         stack.save()
         try:
-            process_stack(stack.context.file.name, stack_name)
+            process_stack(stack, stack_name)
         except StackPostProcessingError as e:
             stack.error_text = f'Post processing error: {e}'
         stack.status = Stack.PUSHED_STATUS
