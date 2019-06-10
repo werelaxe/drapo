@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from . import models
 from .utils import get_adjusted_dc_config
 from .celery_tasks import deploy_task_instance, undeploy_task_instance
+from .common import get_urls, InfoGettingError
 import tasks.models
 
 
@@ -41,7 +42,7 @@ class TaskInstanceAddView(APIView):
         )
         new_task_instance.dc_config = File(open(adjusted_dc_config_path), 'dc_config.yml')
         new_task_instance.save()
-        return Response(status=HTTP_204_NO_CONTENT)
+        return Response({'task_instance_id': new_task_instance.id})
 
 
 class TaskInstanceDeployView(APIView):
@@ -56,3 +57,13 @@ class TaskInstanceUndeployView(APIView):
         task_instance = get_object_or_404(models.TaskInstance.objects.filter(id=id))
         undeploy_task_instance.delay(task_instance.id)
         return Response(status=HTTP_204_NO_CONTENT)
+
+
+class GetTaskInstanceAddressesView(APIView):
+    def get(self, request: Request, id):
+        task_instance = get_object_or_404(models.TaskInstance.objects.filter(id=id))
+        try:
+            urls = get_urls(task_instance)
+            return Response(urls)
+        except InfoGettingError as e:
+            return Response(f"Getting info error: {e}")

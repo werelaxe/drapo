@@ -6,8 +6,8 @@ from django.conf import settings
 from tasks.models import Task
 
 
-def ti_dc_file_path(instance, filename):
-    return os.path.join(settings.STORAGE_DIR, settings.DC_TI_CONFIGS_STORAGE_SUBDIR, f"{instance.id}.yml")
+def task_instance_dc_file_path(instance, filename):
+    return os.path.join(settings.STORAGE_DIR, settings.DC_TASK_INSTANCE_CONFIGS_STORAGE_SUBDIR, f"{instance.id}.yml")
 
 
 class TaskInstance(models.Model):
@@ -32,5 +32,5 @@ class TaskInstance(models.Model):
     )
 
     task = models.ForeignKey(Task, on_delete=DO_NOTHING)
-    dc_config = models.FileField(upload_to=ti_dc_file_path)
+    dc_config = models.FileField(upload_to=task_instance_dc_file_path)
     error_text = models.TextField()

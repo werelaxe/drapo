@@ -15,7 +15,6 @@ class ServiceConfig:
 @dataclass
 class TaskConfig:
     services: list
-    run_independently: bool
 
 
 class ServiceConfigSchema(Schema):
@@ -28,11 +27,9 @@ class ServiceConfigSchema(Schema):
 
 class TaskConfigSchema(Schema):
     services = fields.Dict(fields.Nested(ServiceConfigSchema))
-    run_independently = fields.Boolean()
 
     @post_load
     def make_task_config(self, data):
-        print(data)
         return TaskConfig(**data)
 
 
