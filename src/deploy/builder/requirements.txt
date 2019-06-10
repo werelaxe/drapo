@@ -4,3 +4,5 @@ celery == 4.3.0
 docker == 4.0.1
 PyYAML == 5.1
 djangorestframework == 3.9.4
+docker-registry-client == 0.5.2
+marshmallow == 2.19.2
