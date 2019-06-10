@@ -123,6 +123,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# directory for saving database files
 STORAGE_DIR = 'storage'
 
 
@@ -135,15 +137,29 @@ REST_FRAMEWORK = {
     )
 }
 
+# https://redis.io/
 REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
+
+# celery options
+# http://www.celeryproject.org/
 BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 
+# `docker` command for wrapping
 DOCKER_PATH = 'docker'
+
+# `docker-compose` command for wrapping
 DOCKER_COMPOSE_PATH = 'docker-compose'
+
+# default docker-compose config for searching
 DOCKER_COMPOSE_FILE_DEFAULT_NAME = 'docker-compose.yml'
-DOCKER_REGISTRY_URL = "207.154.245.200:5000"
+
+# https://docs.docker.com/registry
+DOCKER_REGISTRY_URL = "<registry_host>:5000"
+
+# https://docs.docker.com/registry/insecure/
 DOCKER_DAEMON_CONF_PATH = "/etc/docker/daemon.json"
-DEPLOYER_HOSTPORT = "localhost:8000"
+
+DEPLOYER_HOSTPORT = "<deployer_host>:<deployer_port>"

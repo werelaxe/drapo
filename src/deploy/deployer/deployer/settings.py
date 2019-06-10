@@ -126,15 +126,32 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STORAGE_DIR = 'storage'
-DOCKER_REGISTRY_URL = "207.154.245.200:5000"
-BUILDER_HOSTPORT = "localhost:7000"
-BUILDER_TOKEN = "312fceebc699fd5dd66b18f6603232d785381f75"
-DOCKER_COMPOSE_FILENAME = "docker-compose.yml"
-DC_TASK_CONFIGS_STORAGE_SUBDIR = "compose_files"
-DC_TI_CONFIGS_STORAGE_SUBDIR = "ti_dc_files"
 
+# https://docs.docker.com/registry
+DOCKER_REGISTRY_URL = "<registry_host>:5000"
+BUILDER_HOSTPORT = "<builder_host>:<builder_port>"
+
+# builder auth token
+BUILDER_TOKEN = "<builder_token>"
+
+
+# https://docs.docker.com/compose/reference/overview/
+
+# default docker-compose config for searching
+DOCKER_COMPOSE_FILENAME = "docker-compose.yml"
+
+# subdir for keeping task docker-compose configs
+DC_TASK_CONFIGS_STORAGE_SUBDIR = "compose_files"
+
+# subdir for keeping task instance docker-compose configs
+DC_TASK_INSTANCE_CONFIGS_STORAGE_SUBDIR = "task_instance_dc_files"
+
+# https://redis.io/
 REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
+
+# celery options
+# http://www.celeryproject.org/
 BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/1'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/1'
