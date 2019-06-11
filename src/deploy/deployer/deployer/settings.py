@@ -131,9 +131,6 @@ STORAGE_DIR = 'storage'
 DOCKER_REGISTRY_URL = "<registry_host>:5000"
 BUILDER_HOSTPORT = "<builder_host>:<builder_port>"
 
-# builder auth token
-BUILDER_TOKEN = "<builder_token>"
-
 
 # https://docs.docker.com/compose/reference/overview/
 

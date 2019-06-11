@@ -14,8 +14,6 @@ from .stack_processor import check_images
 
 
 class FileUploadView(APIView):
-    authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAdminUser,)
     parser_classes = (FileUploadParser,)
 
     def put(self, request, filename, format=None):
@@ -39,8 +37,6 @@ class FileUploadView(APIView):
 
 
 class StacksListView(APIView):
-    authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAdminUser,)
 
     def get(self, request, name):
         if name is None:
@@ -60,8 +56,6 @@ class StacksListView(APIView):
 
 
 class FileDownloadView(APIView):
-    authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAdminUser,)
 
     def get(self, request, name):
         context_filename = models.context_file_path(None, name)
@@ -72,8 +66,6 @@ class FileDownloadView(APIView):
 
 
 class CheckStackView(APIView):
-    authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAdminUser,)
 
     def post(self, request, name):
         stack = get_object_or_404(models.Stack.objects.filter(name=name))
