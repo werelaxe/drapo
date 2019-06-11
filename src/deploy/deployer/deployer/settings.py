@@ -129,7 +129,7 @@ STORAGE_DIR = 'storage'
 
 # https://docs.docker.com/registry
 DOCKER_REGISTRY_URL = "<registry_host>:5000"
-BUILDER_HOSTPORT = "<builder_host>:<builder_port>"
+BUILDER_HOSTPORT = "localhost:7000"
 
 
 # https://docs.docker.com/compose/reference/overview/

@@ -162,4 +162,4 @@ DOCKER_REGISTRY_URL = "<registry_host>:5000"
 # https://docs.docker.com/registry/insecure/
 DOCKER_DAEMON_CONF_PATH = "/etc/docker/daemon.json"
 
-DEPLOYER_HOSTPORT = "<deployer_host>:<deployer_port>"
+DEPLOYER_HOSTPORT = "localhost:8000"
