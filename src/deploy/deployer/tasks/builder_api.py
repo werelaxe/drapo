@@ -46,7 +46,6 @@ class BuilderApi:
             data=data,
             headers={
                 'Content-Type': 'application/zip',
-                'Authorization': f'Token {self.token}',
             },
             params={'file': name}
         )
@@ -57,7 +56,6 @@ class BuilderApi:
         url = self.get_url(f"/stacks/{name}")
         r = requests.get(
             url,
-            headers={'Authorization': f'Token {self.token}'},
         )
         r.raise_for_status()
         stacks = json.loads(r.content)
@@ -69,7 +67,6 @@ class BuilderApi:
         url = self.get_url(f"/stacks/")
         r = requests.get(
             url,
-            headers={'Authorization': f'Token {self.token}'},
         )
         r.raise_for_status()
         return json.loads(r.content)

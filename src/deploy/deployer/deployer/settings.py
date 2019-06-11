@@ -128,7 +128,7 @@ STATIC_URL = '/static/'
 STORAGE_DIR = 'storage'
 
 # https://docs.docker.com/registry
-DOCKER_REGISTRY_URL = "<registry_host>:5000"
+DOCKER_REGISTRY_URL = "207.154.245.200:5000"
 BUILDER_HOSTPORT = "localhost:7000"
 
 
@@ -146,6 +146,9 @@ DC_TASK_INSTANCE_CONFIGS_STORAGE_SUBDIR = "task_instance_dc_files"
 # https://redis.io/
 REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
+
+# not using right now
+BUILDER_TOKEN = ""
 
 # celery options
 # http://www.celeryproject.org/

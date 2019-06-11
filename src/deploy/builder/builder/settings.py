@@ -157,7 +157,7 @@ DOCKER_COMPOSE_PATH = 'docker-compose'
 DOCKER_COMPOSE_FILE_DEFAULT_NAME = 'docker-compose.yml'
 
 # https://docs.docker.com/registry
-DOCKER_REGISTRY_URL = "<registry_host>:5000"
+DOCKER_REGISTRY_URL = "207.154.245.200:5000"
 
 # https://docs.docker.com/registry/insecure/
 DOCKER_DAEMON_CONF_PATH = "/etc/docker/daemon.json"
